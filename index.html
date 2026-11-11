@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Webpage</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        h1 { color: rgb(0, 0, 0); }
+        h2 { color: rgb(210, 212, 61); }
+        body {
+            box-sizing: border-box;
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 64px 16px 16px;
+            background-color: rgb(86, 126, 211);
+        }
+        .menu-container {
+            position: fixed;
+            top: 12px;
+            right: 12px;
+            z-index: 10;
+        }
+        #menu-toggle {
+            width: 34px;
+            height: 34px;
+            border: 0;
+            border-radius: 7px;
+            background-color: #173b72;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        #menu-options {
+            position: absolute;
+            top: 40px;
+            right: 0;
+            min-width: 180px;
+            padding: 8px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgb(0 0 0 / 25%);
+        }
+        #menu-options[hidden] {
+            display: none;
+        }
+        .menu-item {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border: 0;
+            border-radius: 4px;
+            background-color: #fff;
+            color: #222;
+            text-align: left;
+            cursor: pointer;
+            font: inherit;
+            text-decoration: none;
+        }
+        .menu-item {
+            font-size: 16px;
+        }
+        .menu-item:hover,
+        #menu-toggle:focus-visible,
+        .menu-item:focus-visible,
+        .delete-text:focus-visible,
+        .editable-text:focus-visible {
+            outline: 3px solid #222;
+            outline-offset: 3px;
+        }
+        img {
+            float: right;
+            width: 40%;
+            max-width: 200px;
+            height: auto;
+            margin: 0 0 12px 12px;
+        }
+        #gallery {
+            display: flow-root;
+        }
+        .encouragement-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .encouragement-heading h2 {
+            margin: 0;
+        }
+        .message-row {
+            position: relative;
+            margin-bottom: 8px;
+        }
+        .editable-text {
+            min-height: 1.5em;
+            margin: 0;
+            padding: 8px 34px 8px 8px;
+            border: 1px dashed #222;
+            overflow-wrap: anywhere;
+            white-space: pre-wrap;
+        }
+        .delete-text {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 24px;
+            height: 24px;
+            padding: 0;
+            border: 0;
+            border-radius: 50%;
+            background-color: #fff;
+            color: #222;
+            font-size: 16px;
+            line-height: 1;
+            cursor: pointer;
+        }
+        .editable-text:empty::before {
+            content: attr(data-placeholder);
+            color: #333;
+        }
+        .first-encouragement,
+        .second-encouragement {
+            color: #000;
+            font-weight: 600;
+        }
+        .page-view[hidden] {
+            display: none !important;
+        }
+        .notes-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 16px 0;
+        }
+        #notes-list {
+            display: grid;
+            gap: 12px;
+        }
+        .note-card {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d5c98d;
+            border-radius: 8px;
+            background-color: #fffef7;
+            box-shadow: 0 2px 5px rgb(0 0 0 / 12%);
+        }
+        .note-title,
+        .note-content {
+            box-sizing: border-box;
+            width: 100%;
+            border: 0;
+            background: transparent;
+            color: #222;
+            font: 16px/1.5 "Consolas", "Courier New", monospace;
+        }
+        .note-title {
+            margin-bottom: 8px;
+            padding: 4px 0;
+            border-bottom: 1px solid #d5c98d;
+            font-weight: bold;
+        }
+        .note-content {
+            min-height: 150px;
+            padding: 4px 0;
+            resize: vertical;
+        }
+        .note-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .note-save-status {
+            margin: 0;
+            font-size: 13px;
+        }
+        .delete-note {
+            padding: 6px 10px;
+            border: 0;
+            border-radius: 5px;
+            background: #b42318;
+            color: #fff;
+            cursor: pointer;
+        }
+        #photo-files {
+            display: none;
+        }
+        .add-photo-button {
+            padding: 10px 14px;
+            border: 0;
+            border-radius: 6px;
+            background-color: #173b72;
+            color: #fff;
+            font: inherit;
+            cursor: pointer;
+        }
+        .add-photo-button:focus-visible {
+            outline: 3px solid #222;
+            outline-offset: 3px;
+        }
+        .add-photo-button:hover {
+            background-color: #102b54;
+        }
+        .add-photo-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .gallery-login-card {
+            max-width: 360px;
+            margin: 24px auto;
+            padding: 18px;
+            border-radius: 10px;
+            background: #fff;
+            box-shadow: 0 2px 8px rgb(0 0 0 / 18%);
+        }
+        .gallery-login-button {
+            width: 100%;
+            padding: 12px;
+            border: 0;
+            border-radius: 6px;
+            background: #fff;
+            color: #222;
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        #gallery-email input {
+            box-sizing: border-box;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 12px;
+            border: 1px solid #888;
+            border-radius: 6px;
+            font: inherit;
+        }
+        .gallery-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0;
+        }
+        #gallery-status {
+            max-width: 100%;
+            margin: 12px 0;
+        }
+        #gallery-photos {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 4px;
+            margin-top: 16px;
+        }
+        .gallery-photo {
+            min-width: 0;
+            margin: 0;
+        }
+        .gallery-photo button {
+            display: block;
+            width: 100%;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+        }
+        .gallery-photo img {
+            display: block;
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+        }
+        #photo-viewer[hidden] {
+            display: none !important;
+        }
+        #photo-viewer {
+            position: fixed;
+            inset: 0;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 16px;
+            background: rgb(0 0 0 / 88%);
+        }
+        #viewer-close {
+            position: absolute;
+            top: max(16px, env(safe-area-inset-top));
+            right: 16px;
+            width: 40px;
+            height: 40px;
+            border: 0;
+            border-radius: 50%;
+            background: #fff;
+            color: #222;
+            font-size: 26px;
+            cursor: pointer;
+        }
+        #viewer-image {
+            display: block;
+            width: 100%;
+            max-width: 900px;
+            max-height: 72vh;
+            margin: 0 auto;
+            object-fit: contain;
+            touch-action: pan-y;
+        }
+        .photo-nav {
+            position: absolute;
+            top: 50%;
+            width: 40px;
+            height: 48px;
+            transform: translateY(-50%);
+            border: 0;
+            border-radius: 8px;
+            background: rgb(255 255 255 / 85%);
+            color: #173b72;
+            font-size: 28px;
+            cursor: pointer;
+        }
+        .photo-nav:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+        #previous-photo {
+            left: 12px;
+        }
+        #next-photo {
+            right: 12px;
+        }
+        #viewer-name {
+            margin: 10px 0;
+            color: #fff;
+            text-align: center;
+            overflow-wrap: anywhere;
+        }
+        .photo-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            padding: 12px 0 max(12px, env(safe-area-inset-bottom));
+        }
+        .photo-actions button {
+            min-width: 120px;
+            padding: 12px 16px;
+            border: 0;
+            border-radius: 8px;
+            font: inherit;
+            cursor: pointer;
+        }
+        #delete-photo {
+            background: #b42318;
+            color: #fff;
+        }
+        #save-photo {
+            background: #fff;
+            color: #173b72;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-container">
+        <button id="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu-options">☰</button>
+        <div id="menu-options" hidden>
+            <button class="menu-item" type="button" data-view="home">Home</button>
+            <button class="menu-item" type="button" data-view="gallery">Gallery</button>
+            <button class="menu-item" type="button" data-view="notes">Notes</button>
+        </div>
+    </div>
+    <main>
+        <section id="home" class="page-view">
+            <h1>welcome to my dedicated page for you</h1>
+            <h2>Jeanna Ignacio Doloricon</h2>
+            <img src="jeanna.jpeg" alt="Jeanna">
+            <p>This is for Jeanna Ignacio Doloricon the person who had bring me happiness,hope and joy in my life im so gratefull for her because she had come into my life and change me, and even thought she bites me,i still love her cuz who wouldnt loved that its cute,and lowkey sometimes a gansta when wearing some of her outfits welp no can do she is pretty, gorgeous, cute, happy, responsible,and she is very smart even tho she keep saying she is not. most of all of this she is also tall and she sometimes or most of the time attract people to her, i mean its understandable because for me she is a perfect person and i still keep thinking if im dreaming or its really true that this person confess to me at august 18, 2026 at 10:17pm and chose to love me and say yes when i ask her if i can court her through letter on august 24, 2026.Therefore im making this basic wed page just for her because i want to show how much i love her and how serious i am to her until now im still trying improve myself for her and change my not so good ways of communicating.</p>
+            <div class="encouragement-heading">
+                <h2>your special encouragement</h2>
+            </div>
+            <div id="messages"></div>
+            <p id="save-status" role="status" aria-live="polite"></p>
+            <h5>Hello,its me again, and this is for you to have encouragement when you need it most.</h5>
+            <p class="first-encouragement">1.</p>
+            <p>No matter what happens, you are strong and capable and never doubt yourself,i know you can do it im always here for you ifn your done remmember i always love you and im proud of you no matter what the result it may show.</p>
+            <p class="second-encouragement">2.</p>
+            <p>Remember that you are loved and supported, and that every challenge just an obstacle to overcome and while you have to face those ill always be by your side no matter what the outcome.</p>
+            <p class="third-encouragement">3.</p>
+            <p></p>
+        </section>
+        <section id="gallery" class="page-view" hidden>
+            <h1>Gallery</h1>
+            <p id="gallery-setup" role="status" aria-live="polite">Set up private shared storage to enable the gallery.</p>
+            <form id="gallery-login" class="gallery-login-card" hidden>
+                <h2>Private gallery</h2>
+                <p>Sign in with one of the two approved email addresses to view and manage photos.</p>
+                <input id="gallery-email" type="email" placeholder="Enter your approved email" autocomplete="email" aria-label="Approved email address" required>
+                <button id="email-sign-in" class="gallery-login-button" type="submit">Send Login Link</button>
+                <p id="gallery-login-status" role="status" aria-live="polite"></p>
+            </form>
+            
+            <div class="gallery-toolbar">
+                <input id="photo-files" type="file" accept="image/*" multiple disabled>
+                <button id="choose-photos" class="add-photo-button" type="button" disabled>Add photos</button>
+                <button id="migrate-local-photos" class="add-photo-button" type="button" hidden>Upload photos already on this device</button>
+            </div>
+            <div id="gallery-content" hidden>
+                <div class="gallery-toolbar">
+                    <button id="gallery-sign-out" class="add-photo-button" type="button">Lock gallery</button>
+                </div>
+                <p id="gallery-status" role="status" aria-live="polite"></p>
+                <div id="gallery-photos"></div>
+            </div>
+        </section>
+        <section id="notes" class="page-view" hidden>
+            <h1>Notes</h1>
+            <div class="notes-toolbar">
+                <p>Notes save separately in this browser.</p>
+                <button id="add-note" class="add-photo-button" type="button">Add note</button>
+            </div>
+            <div id="notes-list"></div>
+            <p id="notes-status" role="status" aria-live="polite"></p>
+        </section>
+    </main>
+    <div id="photo-viewer" role="dialog" aria-modal="true" aria-labelledby="viewer-name" hidden>
+        <button id="viewer-close" type="button" aria-label="Close photo">×</button>
+        <button id="previous-photo" class="photo-nav" type="button" aria-label="Previous photo">‹</button>
+        <img id="viewer-image" alt="">
+        <button id="next-photo" class="photo-nav" type="button" aria-label="Next photo">›</button>
+        <p id="viewer-name"></p>
+        <div class="photo-actions">
+            <button id="delete-photo" type="button">Delete</button>
+            <button id="save-photo" type="button">Save to phone</button>
+        </div>
+    </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+<script>
+    const storageKey = "jeanna-encouragement-messages";
+    const notesStorageKey = "jeanna-notes";
+    const galleryBucket = "post-images";
+    const supabaseUrl ="https://eabruavrrbrohutiwmjw.supabase.co";
+    const supabaseAnonKey ="sb_publishable_qC0mhPU3fStF7id3m_rQ2w_VtyZRRJ9";
+    const allowedGalleryEmails = [
+        "fernandezfergie1025@gmail.com",
+        "jeannaignacio84@gmail.com"
+    ];
+    const legacyGalleryDatabaseName = "jeanna-gallery";
+    const legacyGalleryStoreName = "photos";
+    const migratedPhotosStorageKey = "jeanna-shared-gallery-migrated-local-photos";
+    const messages = document.getElementById("messages");
+    const saveStatus = document.getElementById("save-status");
+    const menuToggle = document.getElementById("menu-toggle");
+    const menuOptions = document.getElementById("menu-options");
+    const notesList = document.getElementById("notes-list");
+    const addNoteButton = document.getElementById("add-note");
+    const notesStatus = document.getElementById("notes-status");
+    const photoFiles = document.getElementById("photo-files");
+    const choosePhotosButton = document.getElementById("choose-photos");
+    const migrateLocalPhotosButton = document.getElementById("migrate-local-photos");
+    const galleryStatus = document.getElementById("gallery-status");
+    const gallerySetup = document.getElementById("gallery-setup");
+    const galleryLogin = document.getElementById("gallery-login");
+    const galleryEmailInput = document.getElementById("gallery-email");
+    const emailSignInButton = document.getElementById("email-sign-in");
+    const galleryLoginStatus = document.getElementById("gallery-login-status");
+    const galleryContent = document.getElementById("gallery-content");
+    const gallerySignOutButton = document.getElementById("gallery-sign-out");
+    const galleryPhotos = document.getElementById("gallery-photos");
+    const photoViewer = document.getElementById("photo-viewer");
+    const viewerImage = document.getElementById("viewer-image");
+    const viewerName = document.getElementById("viewer-name");
+    const viewerClose = document.getElementById("viewer-close");
+    const previousPhotoButton = document.getElementById("previous-photo");
+    const nextPhotoButton = document.getElementById("next-photo");
+    const deletePhotoButton = document.getElementById("delete-photo");
+    const savePhotoButton = document.getElementById("save-photo");
+    let galleryClient = null;
+    let galleryItems = [];
+    let selectedPhotoIndex = -1;
+    let swipeStart = null;
+
+    if (window.supabase
+        && supabaseUrl.startsWith("https://")
+        && supabaseAnonKey.startsWith("sb_publishable_")) {
+        galleryClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey, {
+            auth: { storage: window.sessionStorage }
+        });
+        gallerySetup.hidden = true;
+        galleryLogin.hidden = false;
+        initializeGalleryAuth();
+    } else {
+        photoFiles.disabled = true;
+        choosePhotosButton.disabled = true;
+        gallerySetup.hidden = false;
+        galleryLogin.hidden = true;
+        galleryContent.hidden = true;
+        gallerySetup.textContent = window.supabase
+            ? "Add your Supabase project URL and public anon key in this page to enable the private shared gallery."
+            : "The shared gallery needs Supabase setup and an internet connection.";
+    }
+
+    menuToggle.addEventListener("click", function () {
+        const isOpen = menuToggle.getAttribute("aria-expanded") === "true";
+        menuToggle.setAttribute("aria-expanded", String(!isOpen));
+        menuToggle.setAttribute("aria-label", isOpen ? "Open menu" : "Close menu");
+        menuOptions.hidden = isOpen;
+    });
+
+    menuOptions.querySelectorAll("[data-view]").forEach(function (item) {
+        item.addEventListener("click", function () {
+            document.querySelectorAll(".page-view").forEach(function (view) {
+                view.hidden = view.id !== item.dataset.view;
+            });
+            menuOptions.hidden = true;
+            menuToggle.setAttribute("aria-expanded", "false");
+            menuToggle.setAttribute("aria-label", "Open menu");
+        });
+    });
+
+    async function setGalleryAccess(session) {
+        const userEmail = session && session.user && session.user.email
+            ? session.user.email.toLowerCase()
+            : "";
+        const hasAccess = allowedGalleryEmails.includes(userEmail);
+        galleryLogin.hidden = hasAccess;
+        galleryContent.hidden = !hasAccess;
+        photoFiles.disabled = !hasAccess;
+        choosePhotosButton.disabled = !hasAccess;
+        migrateLocalPhotosButton.hidden = true;
+        if (!hasAccess) {
+            renderGallery([]);
+            if (session) {
+                galleryLoginStatus.textContent = "This email address is not on the gallery access list.";
+            }
+            return;
+        }
+        await loadGallery();
+    }
+
+    async function initializeGalleryAuth() {
+        galleryClient.auth.onAuthStateChange(function (_event, session) {
+            window.setTimeout(function () {
+                const userEmail = session && session.user && session.user.email
+                    ? session.user.email.toLowerCase()
+                    : "";
+                if (session && !allowedGalleryEmails.includes(userEmail)) {
+                    galleryLoginStatus.textContent = "This account does not have access to this gallery.";
+                    galleryClient.auth.signOut().then(function (result) {
+                        if (result.error) {
+                            galleryLoginStatus.textContent = "This account has no gallery access. Close this tab and try again.";
+                        }
+                    });
+                    return;
+                }
+                setGalleryAccess(session);
+            }, 0);
+        });
+
+        try {
+            const { data, error } = await galleryClient.auth.getSession();
+            if (error) {
+                throw error;
+            }
+            await setGalleryAccess(data.session);
+        } catch (error) {
+            galleryLoginStatus.textContent = "Could not check the gallery sign-in. Please reload and try again.";
+            galleryLogin.hidden = false;
+        }
+    }
+
+    galleryLogin.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const email = galleryEmailInput.value.trim().toLowerCase();
+        if (!allowedGalleryEmails.includes(email)) {
+            galleryLoginStatus.textContent = "Use one of the approved email addresses.";
+            return;
+        }
+
+        emailSignInButton.disabled = true;
+        galleryLoginStatus.textContent = "Sending a sign-in link...";
+        try {
+            const { error } = await galleryClient.auth.signInWithOtp({
+                email: email,
+                options: {
+                    emailRedirectTo: window.location.href
+                }
+            });
+            if (error) {
+                throw error;
+            }
+            galleryLoginStatus.textContent = "Sign-in link sent. Check your email.";
+        } catch (error) {
+            galleryLoginStatus.textContent = error.message || "Could not send a sign-in link. Check the Supabase email provider setup.";
+        } finally {
+            emailSignInButton.disabled = false;
+        }
+    });
+
+    gallerySignOutButton.addEventListener("click", async function () {
+        gallerySignOutButton.disabled = true;
+        try {
+            const { error } = await galleryClient.auth.signOut();
+            if (error) {
+                galleryStatus.textContent = "Could not lock the gallery. Please close this page.";
+                return;
+            }
+            galleryLoginStatus.textContent = "Gallery locked.";
+        } catch (error) {
+            galleryStatus.textContent = "Could not lock the gallery. Please close this page.";
+        } finally {
+            gallerySignOutButton.disabled = false;
+        }
+    });
+
+    function saveNotes() {
+        const notes = Array.from(notesList.querySelectorAll(".note-card")).map(function (card) {
+            return {
+                id: card.dataset.noteId,
+                title: card.querySelector(".note-title").value,
+                content: card.querySelector(".note-content").value
+            };
+        });
+        try {
+            localStorage.setItem(notesStorageKey, JSON.stringify(notes));
+            notesStatus.textContent = "Notes saved in this browser.";
+            return true;
+        } catch (error) {
+            notesStatus.textContent = "Could not save notes. Browser storage may be unavailable or full.";
+            return false;
+        }
+    }
+
+    function createNote(note) {
+        const card = document.createElement("article");
+        card.className = "note-card";
+        card.dataset.noteId = note.id || String(Date.now()) + "-" + Math.random().toString(36).slice(2);
+
+        const title = document.createElement("input");
+        title.className = "note-title";
+        title.type = "text";
+        title.maxLength = 100;
+        title.placeholder = "Note title";
+        title.setAttribute("aria-label", "Note title");
+        title.value = note.title || "";
+
+        const content = document.createElement("textarea");
+        content.className = "note-content";
+        content.placeholder = "Write your note here...";
+        content.setAttribute("aria-label", "Note text");
+        content.value = note.content || "";
+
+        const actions = document.createElement("div");
+        actions.className = "note-actions";
+        const status = document.createElement("p");
+        status.className = "note-save-status";
+        status.setAttribute("role", "status");
+        status.textContent = "Saved";
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "delete-note";
+        deleteButton.type = "button";
+        deleteButton.textContent = "Delete note";
+        deleteButton.addEventListener("click", function () {
+            card.remove();
+            saveNotes();
+        });
+
+        [title, content].forEach(function (field) {
+            field.addEventListener("input", function () {
+                status.textContent = saveNotes() ? "Saved" : "Could not save";
+            });
+        });
+        actions.append(status, deleteButton);
+        card.append(title, content, actions);
+        notesList.appendChild(card);
+        return title;
+    }
+
+    try {
+        const savedNotes = localStorage.getItem(notesStorageKey);
+        if (savedNotes) {
+            let notes;
+            try {
+                notes = JSON.parse(savedNotes);
+            } catch (error) {
+                notes = [{ title: "", content: savedNotes }];
+            }
+            if (typeof notes === "string") {
+                notes = notes ? [{ title: "", content: notes }] : [];
+            }
+            if (!Array.isArray(notes) || !notes.every(function (note) {
+                return note && typeof note === "object"
+                    && typeof note.title === "string"
+                    && typeof note.content === "string";
+            })) {
+                throw new Error("Saved notes have an invalid format.");
+            }
+            notes.forEach(createNote);
+            if (notes.length > 0) {
+                saveNotes();
+            }
+        }
+    } catch (error) {
+        notesStatus.textContent = "Could not load notes from this browser.";
+    }
+
+    addNoteButton.addEventListener("click", function () {
+        const title = createNote({ title: "", content: "" });
+        saveNotes();
+        title.focus();
+    });
+
+    function openLegacyGalleryDatabase() {
+        return new Promise(function (resolve, reject) {
+            if (!("indexedDB" in window)) {
+                resolve(null);
+                return;
+            }
+            const request = indexedDB.open(legacyGalleryDatabaseName, 1);
+            request.onupgradeneeded = function () {
+                request.transaction.abort();
+            };
+            request.onsuccess = function () {
+                resolve(request.result);
+            };
+            request.onerror = function () {
+                if (request.error && request.error.name === "AbortError") {
+                    resolve(null);
+                    return;
+                }
+                reject(request.error || new Error("Could not open local photos."));
+            };
+        });
+    }
+
+    async function getLegacyLocalPhotos() {
+        const database = await openLegacyGalleryDatabase();
+        if (!database) {
+            return [];
+        }
+        try {
+            if (!database.objectStoreNames.contains(legacyGalleryStoreName)) {
+                return [];
+            }
+            return await new Promise(function (resolve, reject) {
+                const transaction = database.transaction(legacyGalleryStoreName, "readonly");
+                const request = transaction.objectStore(legacyGalleryStoreName).getAll();
+                request.onsuccess = function () { resolve(request.result); };
+                request.onerror = function () {
+                    reject(request.error || new Error("Could not read local photos."));
+                };
+            });
+        } finally {
+            database.close();
+        }
+    }
+
+    function getMigratedPhotoIds() {
+        try {
+            const ids = JSON.parse(localStorage.getItem(migratedPhotosStorageKey) || "[]");
+            return Array.isArray(ids) ? ids : [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    function saveMigratedPhotoIds(ids) {
+        try {
+            localStorage.setItem(migratedPhotosStorageKey, JSON.stringify(ids));
+            return true;
+        } catch (error) {
+            galleryStatus.textContent = "Photos uploaded, but this browser could not save the local migration record.";
+            return false;
+        }
+    }
+
+    function makePhotoPath(name) {
+        const safeName = name.normalize("NFKD").replace(/[^\w.-]+/g, "-").replace(/^-+|-+$/g, "").slice(-100) || "photo";
+        const uniqueId = window.crypto && typeof window.crypto.randomUUID === "function"
+            ? window.crypto.randomUUID()
+            : Date.now().toString(36) + "-" + Math.random().toString(36).slice(2);
+        return uniqueId + "-" + safeName;
+    }
+
+    async function uploadSharedPhoto(file, name) {
+        const path = makePhotoPath(name || file.name || "photo");
+        const result = await galleryClient.storage.from(galleryBucket).upload(path, file, {
+            cacheControl: "3600",
+            contentType: file.type || "application/octet-stream",
+            upsert: false
+        });
+        if (result.error) {
+            throw result.error;
+        }
+        return path;
+    }
+
+    function renderGalleryPhoto(photo) {
+        const card = document.createElement("article");
+        card.className = "gallery-photo";
+        const openButton = document.createElement("button");
+        openButton.type = "button";
+        openButton.setAttribute("aria-label", "Open photo: " + photo.name);
+        const image = document.createElement("img");
+        image.src = photo.publicUrl;
+        image.alt = photo.name;
+        openButton.appendChild(image);
+        openButton.addEventListener("click", function () {
+            showPhotoAt(galleryItems.indexOf(photo));
+        });
+        card.appendChild(openButton);
+        galleryPhotos.appendChild(card);
+    }
+
+    function renderGallery(photos) {
+        galleryPhotos.replaceChildren();
+        galleryItems = photos;
+        galleryItems.forEach(renderGalleryPhoto);
+    }
+
+    function showPhotoAt(index) {
+        if (index < 0 || index >= galleryItems.length) {
+            return;
+        }
+        selectedPhotoIndex = index;
+        const photo = galleryItems[index];
+        viewerImage.src = photo.publicUrl;
+        viewerImage.alt = photo.name;
+        viewerName.textContent = photo.name;
+        previousPhotoButton.disabled = index === 0;
+        nextPhotoButton.disabled = index === galleryItems.length - 1;
+        photoViewer.hidden = false;
+        viewerClose.focus();
+    }
+
+    function movePhotoBy(offset) {
+        showPhotoAt(selectedPhotoIndex + offset);
+    }
+
+    function closePhotoViewer() {
+        photoViewer.hidden = true;
+        viewerImage.removeAttribute("src");
+        selectedPhotoIndex = -1;
+    }
+
+    viewerClose.addEventListener("click", closePhotoViewer);
+    previousPhotoButton.addEventListener("click", function () {
+        movePhotoBy(-1);
+    });
+    nextPhotoButton.addEventListener("click", function () {
+        movePhotoBy(1);
+    });
+    photoViewer.addEventListener("click", function (event) {
+        if (event.target === photoViewer) {
+            closePhotoViewer();
+        }
+    });
+    viewerImage.addEventListener("pointerdown", function (event) {
+        swipeStart = { x: event.clientX, y: event.clientY };
+    });
+    viewerImage.addEventListener("pointerup", function (event) {
+        if (!swipeStart) {
+            return;
+        }
+        const horizontalDistance = event.clientX - swipeStart.x;
+        const verticalDistance = event.clientY - swipeStart.y;
+        swipeStart = null;
+        if (Math.abs(horizontalDistance) < 45 || Math.abs(horizontalDistance) < Math.abs(verticalDistance) * 1.2) {
+            return;
+        }
+        movePhotoBy(horizontalDistance < 0 ? 1 : -1);
+    });
+    viewerImage.addEventListener("pointercancel", function () {
+        swipeStart = null;
+    });
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && !photoViewer.hidden) {
+            closePhotoViewer();
+        } else if (!photoViewer.hidden && event.key === "ArrowLeft") {
+            movePhotoBy(-1);
+        } else if (!photoViewer.hidden && event.key === "ArrowRight") {
+            movePhotoBy(1);
+        }
+    });
+
+    deletePhotoButton.addEventListener("click", async function () {
+        if (selectedPhotoIndex < 0 || !galleryClient) {
+            return;
+        }
+        const current = galleryItems[selectedPhotoIndex];
+        deletePhotoButton.disabled = true;
+        try {
+            const result = await galleryClient.storage.from(galleryBucket).remove([current.id]);
+            if (result.error) {
+                throw result.error;
+            }
+            closePhotoViewer();
+            renderGallery(galleryItems.filter(function (photo) { return photo.id !== current.id; }));
+            galleryStatus.textContent = "Photo deleted from the shared gallery.";
+        } catch (error) {
+            galleryStatus.textContent = "Could not delete the photo from the shared gallery.";
+        } finally {
+            deletePhotoButton.disabled = false;
+        }
+    });
+
+    savePhotoButton.addEventListener("click", function () {
+        if (selectedPhotoIndex < 0) {
+            return;
+        }
+        const photo = galleryItems[selectedPhotoIndex];
+        const downloadUrl = new URL(photo.publicUrl);
+        downloadUrl.searchParams.set("download", photo.name || "photo");
+        const link = document.createElement("a");
+        link.href = downloadUrl.toString();
+        link.target = "_blank";
+        link.rel = "noopener";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        galleryStatus.textContent = "Photo opened for download. Use your browser's save option to keep it on your phone.";
+    });
+
+    async function loadGallery() {
+        if (!galleryClient || galleryContent.hidden) {
+            return;
+        }
+        try {
+            const { data, error } = await galleryClient.storage.from(galleryBucket).list("", {
+                limit: 1000,
+                sortBy: { column: "created_at", order: "asc" }
+            });
+            if (error) {
+                throw error;
+            }
+            const photos = await Promise.all((data || []).filter(function (entry) {
+                return entry.id && entry.metadata;
+            }).map(async function (entry) {
+                const { data: signedData, error: signedError } = await galleryClient
+                    .storage.from(galleryBucket).createSignedUrl(entry.name, 3600);
+                if (signedError) {
+                    throw signedError;
+                }
+                return {
+                    id: entry.name,
+                    name: entry.name.replace(/^[0-9a-f-]{20,}-/i, ""),
+                    metadata: entry.metadata,
+                    publicUrl: signedData.signedUrl
+                };
+            }));
+            renderGallery(photos);
+            photoFiles.disabled = false;
+            choosePhotosButton.disabled = false;
+            galleryStatus.textContent = photos.length === 0
+                ? "No photos yet. Add photos to the shared gallery."
+                : photos.length + (photos.length === 1 ? " photo in the shared gallery." : " photos in the shared gallery.");
+            await checkForLocalPhotos();
+        } catch (error) {
+            photoFiles.disabled = true;
+            choosePhotosButton.disabled = true;
+            galleryStatus.textContent = error.message || "Could not connect to shared photo storage. Check the project setup and internet connection.";
+        }
+    }
+
+    choosePhotosButton.addEventListener("click", function () {
+        photoFiles.click();
+    });
+
+    photoFiles.addEventListener("change", async function () {
+        const files = Array.from(photoFiles.files || []).filter(function (file) {
+            return file.type.startsWith("image/");
+        });
+        if (files.length === 0) {
+            return;
+        }
+        const maxPhotoSize = 10 * 1024 * 1024;
+        const oversizedFile = files.find(function (file) { return file.size > maxPhotoSize; });
+        if (oversizedFile) {
+            galleryStatus.textContent = oversizedFile.name + " is larger than the 10 MB limit.";
+            photoFiles.value = "";
+            return;
+        }
+        if (!galleryClient) {
+            galleryStatus.textContent = "Shared photo storage is not configured.";
+            return;
+        }
+
+        galleryStatus.textContent = "Saving photos...";
+        try {
+            for (const file of files) {
+                await uploadSharedPhoto(file, file.name);
+            }
+            await loadGallery();
+            galleryStatus.textContent = files.length === 1
+                ? "Photo saved to the shared gallery."
+                : files.length + " photos saved to the shared gallery.";
+        } catch (error) {
+            galleryStatus.textContent = error.message || "Could not upload the photos. Check storage permissions and available space.";
+        } finally {
+            photoFiles.value = "";
+        }
+    });
+
+    async function checkForLocalPhotos() {
+        migrateLocalPhotosButton.hidden = true;
+        try {
+            const [localPhotos, migratedIds] = await Promise.all([
+                getLegacyLocalPhotos(),
+                Promise.resolve(getMigratedPhotoIds())
+            ]);
+            const pendingPhotos = localPhotos.filter(function (photo) {
+                return !migratedIds.includes(String(photo.id));
+            });
+            if (pendingPhotos.length > 0) {
+                migrateLocalPhotosButton.textContent = "Upload " + pendingPhotos.length
+                    + (pendingPhotos.length === 1 ? " old photo" : " old photos") + " from this device";
+                migrateLocalPhotosButton.hidden = false;
+                migrateLocalPhotosButton.dataset.pendingCount = String(pendingPhotos.length);
+            }
+        } catch (error) {
+            galleryStatus.textContent = "Could not check for photos saved on this device.";
+        }
+    }
+
+    migrateLocalPhotosButton.addEventListener("click", async function () {
+        migrateLocalPhotosButton.disabled = true;
+        galleryStatus.textContent = "Uploading photos from this device...";
+        try {
+            const localPhotos = await getLegacyLocalPhotos();
+            const migratedIds = getMigratedPhotoIds();
+            const pendingPhotos = localPhotos.filter(function (photo) {
+                return !migratedIds.includes(String(photo.id));
+            });
+            for (const photo of pendingPhotos) {
+                await uploadSharedPhoto(photo.image, photo.name);
+                migratedIds.push(String(photo.id));
+                if (!saveMigratedPhotoIds(migratedIds)) {
+                    throw new Error("Could not save which local photos were transferred.");
+                }
+            }
+            migrateLocalPhotosButton.hidden = true;
+            await loadGallery();
+            galleryStatus.textContent = pendingPhotos.length + " old "
+                + (pendingPhotos.length === 1 ? "photo was" : "photos were") + " added to the shared gallery.";
+        } catch (error) {
+            galleryStatus.textContent = error.message || "Could not transfer the old photos.";
+            migrateLocalPhotosButton.disabled = false;
+        }
+    });
+
+    function saveMessages() {
+        const texts = Array.from(messages.querySelectorAll(".editable-text"))
+            .map(function (text) { return text.textContent; });
+        try {
+            localStorage.setItem(storageKey, JSON.stringify(texts));
+            saveStatus.textContent = "Saved in this browser.";
+        } catch (error) {
+            saveStatus.textContent = "Could not save. Browser storage may be unavailable or full.";
+        }
+    }
+
+    function addMessage(value) {
+        const row = document.createElement("div");
+        row.className = "message-row";
+        const text = document.createElement("p");
+        text.className = "editable-text";
+        text.contentEditable = "true";
+        text.textContent = value;
+        text.setAttribute("role", "textbox");
+        text.setAttribute("aria-label", "New text");
+        text.setAttribute("data-placeholder", "Type your text here...");
+        text.addEventListener("input", saveMessages);
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "delete-text";
+        deleteButton.type = "button";
+        deleteButton.textContent = "×";
+        deleteButton.setAttribute("aria-label", "Delete this text");
+        deleteButton.addEventListener("click", function () {
+            row.remove();
+            saveMessages();
+        });
+        row.append(text, deleteButton);
+        messages.appendChild(row);
+        return text;
+    }
+
+    try {
+        const saved = localStorage.getItem(storageKey);
+        if (saved !== null) {
+            const texts = JSON.parse(saved);
+            if (!Array.isArray(texts) || !texts.every(function (text) { return typeof text === "string"; })) {
+                throw new Error("Saved messages have an invalid format.");
+            }
+            if (texts.length > 0) {
+                texts.forEach(addMessage);
+            }
+        }
+    } catch (error) {
+        saveStatus.textContent = "Could not load saved text from this browser.";
+    }
+
+</script>
+</body>
+</html>
